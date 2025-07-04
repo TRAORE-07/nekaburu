@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity, Animated } from 'react-native';
 import CustomHeader from '../../components/layout/CustomHeader';
-import Ionicons from '@expo/vector-icons/Ionicons'; // Pour les icônes
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Product } from '../../types/Products';
+
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10; // Marge souhaitée entre les cartes
 const cardWidth = (width - (cardMargin * 4)) / 3; // Largeur pour 3 cartes avec 4 marges
 
 // Données fictives pour les produits (avec toutes les infos, y compris rating)
-const dummyBreads = [
+const dummyBreads: Product[] = [
   { id: '1', name: 'Baguette Tradition', weight: '250g', price: '100F', rating: 4.5, ratingCount: 120, preparationTime: '10 MINS', image: require('../../../assets/img_pain/bagette.jpg') },
   { id: '2', name: 'Pain Complet', weight: '500g', price: '150F', rating: 4.0, ratingCount: 85, preparationTime: '30 MINS', image: require('../../../assets/img_pain/pain-complet.jpg') },
   { id: '3', name: 'Pain au Levain', weight: '500g', price: '175F', rating: 4.8, ratingCount: 210, preparationTime: '45 MINS', image: require('../../../assets/img_pain/pain-levain.jpg') },
@@ -18,7 +20,7 @@ const dummyBreads = [
   { id: '6', name: 'Pain de Seigle', weight: '600g', price: '250F', rating: 4.3, ratingCount: 95, preparationTime: '40 MINS', image: require('../../../assets/img_pain/pain-seigle.jpg') },
 ];
 
-const dummyPastries = [
+const dummyPastries: Product[] = [
   { id: '7', name: 'Croissant', weight: '100g', price: '500F', rating: 4.7, ratingCount: 300, preparationTime: '8 MINS', image: require('../../../assets/img_patisserie/croissant.jpg') },
   { id: '8', name: 'Pain au Chocolat', weight: '250g', price: '600F', rating: 4.6, ratingCount: 250, preparationTime: '10 MINS', image: require('../../../assets/img_patisserie/pain-chocolat.jpg') },
   { id: '9', name: 'Chausson aux Pommes', weight: '120g', price: '300F', rating: 4.4, ratingCount: 180, preparationTime: '12 MINS', image: require('../../../assets/img_patisserie/chausson-pommes.jpg') },
@@ -104,9 +106,20 @@ function HomeScreen(): React.JSX.Element {
 
   const totalCartItems = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
 
-  const handleSearch = (searchText: string) => {
-    console.log('Recherche lancée sur l’accueil pour:', searchText);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
   };
+
+  const filteredBreads = dummyBreads.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const filteredPastries = dummyPastries.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
 
   const updateCartItemQuantity = (productId: string, productName: string, change: number) => {
     setCart(prevCart => {
@@ -138,6 +151,7 @@ function HomeScreen(): React.JSX.Element {
 
   const handleViewCart = () => {
     console.log('Naviguer vers la page du panier');
+
   };
 
   return (
@@ -148,7 +162,7 @@ function HomeScreen(): React.JSX.Element {
 
         <Text style={styles.welcomeText}>Nos Pains Frais du Jour</Text>
         <View style={styles.productGrid}>
-          {dummyBreads.map(product => {
+          {filteredBreads.map(product => {
             const quantity = cart[product.id] || 0;
             return (
               <View key={product.id} style={styles.productCardPlaceholder}>
@@ -207,7 +221,7 @@ function HomeScreen(): React.JSX.Element {
 
         <Text style={styles.welcomeText}>Nos Pâtisseries du Jour</Text>
         <View style={styles.productGrid}>
-          {dummyPastries.map(product => {
+          {filteredPastries.map(product => {
             const quantity = cart[product.id] || 0;
             return (
               <View key={product.id} style={styles.productCardPlaceholder}>

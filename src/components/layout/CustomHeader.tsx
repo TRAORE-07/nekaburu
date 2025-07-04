@@ -35,8 +35,13 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
                 placeholder="Rechercher..."
                 placeholderTextColor="#999"
                 value={searchText}
-                onChangeText={setSearchText}
-                onSubmitEditing={handleSearch} // Lance la recherche quand l'utilisateur valide
+
+                onChangeText={(text) => {
+                  setSearchText(text);
+                  if (onSearch) onSearch(text); // à chaque frappe
+                }}
+
+                onSubmitEditing={handleSearch}
                 returnKeyType="search"
               />
             </View>
