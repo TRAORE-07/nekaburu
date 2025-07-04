@@ -3,31 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity, Animated } from 'react-native';
 import CustomHeader from '../../components/layout/CustomHeader';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Product } from '../../types/Products';
+import { dummyBreads, dummyPastries } from '../../data/Products';
 
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10; // Marge souhaitée entre les cartes
 const cardWidth = (width - (cardMargin * 4)) / 3; // Largeur pour 3 cartes avec 4 marges
 
-// Données fictives pour les produits (avec toutes les infos, y compris rating)
-const dummyBreads: Product[] = [
-  { id: '1', name: 'Baguette Tradition', weight: '250g', price: '100F', rating: 4.5, ratingCount: 120, preparationTime: '10 MINS', image: require('../../../assets/img_pain/bagette.jpg') },
-  { id: '2', name: 'Pain Complet', weight: '500g', price: '150F', rating: 4.0, ratingCount: 85, preparationTime: '30 MINS', image: require('../../../assets/img_pain/pain-complet.jpg') },
-  { id: '3', name: 'Pain au Levain', weight: '500g', price: '175F', rating: 4.8, ratingCount: 210, preparationTime: '45 MINS', image: require('../../../assets/img_pain/pain-levain.jpg') },
-  { id: '4', name: 'Pain de Campagne', weight: '500g', price: '200F', rating: 4.2, ratingCount: 150, preparationTime: '50 MINS', image: require('../../../assets/img_pain/pain-campagne.jpg') },
-  { id: '5', name: 'Ciabatta', weight: '200g', price: '100F', rating: 3.9, ratingCount: 70, preparationTime: '15 MINS', image: require('../../../assets/img_pain/ciabatta.jpg') },
-  { id: '6', name: 'Pain de Seigle', weight: '600g', price: '250F', rating: 4.3, ratingCount: 95, preparationTime: '40 MINS', image: require('../../../assets/img_pain/pain-seigle.jpg') },
-];
-
-const dummyPastries: Product[] = [
-  { id: '7', name: 'Croissant', weight: '100g', price: '500F', rating: 4.7, ratingCount: 300, preparationTime: '8 MINS', image: require('../../../assets/img_patisserie/croissant.jpg') },
-  { id: '8', name: 'Pain au Chocolat', weight: '250g', price: '600F', rating: 4.6, ratingCount: 250, preparationTime: '10 MINS', image: require('../../../assets/img_patisserie/pain-chocolat.jpg') },
-  { id: '9', name: 'Chausson aux Pommes', weight: '120g', price: '300F', rating: 4.4, ratingCount: 180, preparationTime: '12 MINS', image: require('../../../assets/img_patisserie/chausson-pommes.jpg') },
-  { id: '10', name: 'Brioche', weight: '300g', price: '750F', rating: 4.1, ratingCount: 100, preparationTime: '25 MINS', image: require('../../../assets/img_patisserie/brioche.jpg') },
-  { id: '11', name: 'Tarte au Citron', weight: '500g', price: '1000F', rating: 4.9, ratingCount: 90, preparationTime: '15 MINS', image: require('../../../assets/img_patisserie/tarte-citron.jpg') },
-  { id: '12', name: 'Éclair au Café', weight: '90g', price: '200F', rating: 4.5, ratingCount: 110, preparationTime: '7 MINS', image: require('../../../assets/img_patisserie/eclair-cafe.jpg') },
-];
 
 // Fonction utilitaire pour rendre les étoiles
 const renderStars = (rating: number) => {
@@ -99,6 +81,8 @@ const CartPopup: React.FC<CartPopupProps> = ({ itemCount, onViewCart, isVisible 
 interface CartState {
   [productId: string]: number;
 }
+
+//----------------------------------------------------
 
 function HomeScreen(): React.JSX.Element {
   const [cart, setCart] = useState<CartState>({});
