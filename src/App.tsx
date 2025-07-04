@@ -1,13 +1,16 @@
 // Le composant racine de l'application: initialiser l'environnement global de l'application
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import AppNavigator from './navigation/AppNavigator'; // <-- C'est votre navigateur principal
+import AppNavigator from './navigation/AppNavigator';
+import { CartProvider } from './components/context/CartContext';
 
 function App() {
   return (
-    <NavigationContainer>
-      <AppNavigator /> {/* C'est ici que votre structure de navigation est rendue */}
-    </NavigationContainer>
+    <CartProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </CartProvider>
   );
 }
 

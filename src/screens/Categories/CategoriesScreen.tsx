@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import CustomHeader from '../../components/layout/CustomHeader';
 import ProductGrid from '../../components/layout/ProductGrid';
 import { dummyBreads, dummyPastries } from '../../data/Products';
-
-interface CartState {
-  [productId: string]: number;
-}
+import { useCart } from '../../hooks/useCart';
 
 const CategoriesScreen: React.FC = () => {
+  const { addToCart, removeFromCart, getQuantity } = useCart();
+
   const allProducts = [...dummyBreads, ...dummyPastries];
 
   const sucrés = allProducts.filter(p => p.type === 'Sucré');
@@ -16,27 +15,6 @@ const CategoriesScreen: React.FC = () => {
   const neutres = allProducts.filter(p => p.type === 'Neutre');
   const acidulés = allProducts.filter(p => p.type === 'Acidulé');
   const légAcidulés = allProducts.filter(p => p.type === 'Légèrement acidulé');
-
-  // State du panier ici
-  const [cart, setCart] = useState<CartState>({});
-
-  const updateCartItemQuantity = (productId: string, change: number) => {
-    setCart(prevCart => {
-      const currentQuantity = prevCart[productId] || 0;
-      const newQuantity = currentQuantity + change;
-
-      if (newQuantity <= 0) {
-        const newCart = { ...prevCart };
-        delete newCart[productId];
-        return newCart;
-      } else {
-        return {
-          ...prevCart,
-          [productId]: newQuantity,
-        };
-      }
-    });
-  };
 
   return (
     <View style={styles.container}>
@@ -47,27 +25,27 @@ const CategoriesScreen: React.FC = () => {
         <ProductGrid
           products={sucrés}
           showStepper
-          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
-          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
-          getQuantity={(id) => cart[id] || 0}
+          onAddToCart={addToCart}
+          onRemoveFromCart={removeFromCart}
+          getQuantity={getQuantity}
         />
 
         <Text style={styles.title}>Produits Salés</Text>
         <ProductGrid
           products={salés}
           showStepper
-          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
-          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
-          getQuantity={(id) => cart[id] || 0}
+          onAddToCart={addToCart}
+          onRemoveFromCart={removeFromCart}
+          getQuantity={getQuantity}
         />
 
         <Text style={styles.title}>Produits Neutres</Text>
         <ProductGrid
           products={neutres}
           showStepper
-          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
-          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
-          getQuantity={(id) => cart[id] || 0}
+          onAddToCart={addToCart}
+          onRemoveFromCart={removeFromCart}
+          getQuantity={getQuantity}
         />
 
         {acidulés.length > 0 && (
@@ -76,9 +54,9 @@ const CategoriesScreen: React.FC = () => {
             <ProductGrid
               products={acidulés}
               showStepper
-              onAddToCart={(id) => updateCartItemQuantity(id, 1)}
-              onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
-              getQuantity={(id) => cart[id] || 0}
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              getQuantity={getQuantity}
             />
           </>
         )}
@@ -89,9 +67,9 @@ const CategoriesScreen: React.FC = () => {
             <ProductGrid
               products={légAcidulés}
               showStepper
-              onAddToCart={(id) => updateCartItemQuantity(id, 1)}
-              onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
-              getQuantity={(id) => cart[id] || 0}
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              getQuantity={getQuantity}
             />
           </>
         )}
