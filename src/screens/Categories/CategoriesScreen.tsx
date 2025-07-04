@@ -1,44 +1,104 @@
-// CATEGORIES SCREEN
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import CustomHeader from '../../components/layout/CustomHeader';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { dummyBreads, dummyPastries } from '../../data/Products';
 import ProductGrid from '../../components/layout/ProductGrid';
+import { dummyBreads, dummyPastries } from '../../data/Products';
 
-const allProducts = [...dummyBreads, ...dummyPastries];
+interface CartState {
+  [productId: string]: number;
+}
 
-const sucrés = allProducts.filter(p => p.type === 'Sucré');
-const salés = allProducts.filter(p => p.type === 'Salé');
-const neutres = allProducts.filter(p => p.type === 'Neutre');
-const acidulé = allProducts.filter(p => p.type === 'Acidulé');
-const légèrement_acidulé = allProducts.filter(p => p.type === 'Légèrement acidulé');
+const CategoriesScreen: React.FC = () => {
+  const allProducts = [...dummyBreads, ...dummyPastries];
 
-function CategoriesScreen(): React.JSX.Element {
+  const sucrés = allProducts.filter(p => p.type === 'Sucré');
+  const salés = allProducts.filter(p => p.type === 'Salé');
+  const neutres = allProducts.filter(p => p.type === 'Neutre');
+  const acidulés = allProducts.filter(p => p.type === 'Acidulé');
+  const légAcidulés = allProducts.filter(p => p.type === 'Légèrement acidulé');
+
+  // State du panier ici
+  const [cart, setCart] = useState<CartState>({});
+
+  const updateCartItemQuantity = (productId: string, change: number) => {
+    setCart(prevCart => {
+      const currentQuantity = prevCart[productId] || 0;
+      const newQuantity = currentQuantity + change;
+
+      if (newQuantity <= 0) {
+        const newCart = { ...prevCart };
+        delete newCart[productId];
+        return newCart;
+      } else {
+        return {
+          ...prevCart,
+          [productId]: newQuantity,
+        };
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader appName="NEKABURU" />
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.sectionTitle}>Produits Sucrés</Text>
-        <ProductGrid products={sucrés} />
+        <Text style={styles.title}>Produits Sucrés</Text>
+        <ProductGrid
+          products={sucrés}
+          showStepper
+          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
+          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
+          getQuantity={(id) => cart[id] || 0}
+        />
 
-        <Text style={styles.sectionTitle}>Produits Salés</Text>
-        <ProductGrid products={salés} />
+        <Text style={styles.title}>Produits Salés</Text>
+        <ProductGrid
+          products={salés}
+          showStepper
+          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
+          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
+          getQuantity={(id) => cart[id] || 0}
+        />
 
-        <Text style={styles.sectionTitle}>Produits Neutres</Text>
-        <ProductGrid products={neutres} />
+        <Text style={styles.title}>Produits Neutres</Text>
+        <ProductGrid
+          products={neutres}
+          showStepper
+          onAddToCart={(id) => updateCartItemQuantity(id, 1)}
+          onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
+          getQuantity={(id) => cart[id] || 0}
+        />
 
-        <Text style={styles.sectionTitle}>Produits Acidulé</Text>
-        <ProductGrid products={acidulé} />
+        {acidulés.length > 0 && (
+          <>
+            <Text style={styles.title}>Produits Acidulés</Text>
+            <ProductGrid
+              products={acidulés}
+              showStepper
+              onAddToCart={(id) => updateCartItemQuantity(id, 1)}
+              onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
+              getQuantity={(id) => cart[id] || 0}
+            />
+          </>
+        )}
 
-        <Text style={styles.sectionTitle}>Produits Légèrement acidulé</Text>
-        <ProductGrid products={légèrement_acidulé} />
-
+        {légAcidulés.length > 0 && (
+          <>
+            <Text style={styles.title}>Légèrement Acidulés</Text>
+            <ProductGrid
+              products={légAcidulés}
+              showStepper
+              onAddToCart={(id) => updateCartItemQuantity(id, 1)}
+              onRemoveFromCart={(id) => updateCartItemQuantity(id, -1)}
+              getQuantity={(id) => cart[id] || 0}
+            />
+          </>
+        )}
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -46,13 +106,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   scrollContainer: {
-    padding: 16,
+    padding: 10,
+    paddingBottom: 20,
   },
-  sectionTitle: {
+  title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 20,
+    marginVertical: 10,
+    textAlign: 'center',
     color: '#333',
   },
 });

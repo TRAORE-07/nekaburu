@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, Dimensions, Image, TouchableOpacity
 import CustomHeader from '../../components/layout/CustomHeader';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { dummyBreads, dummyPastries } from '../../data/Products';
+import ProductGrid from '../../components/layout/ProductGrid';
 
 
 const { width } = Dimensions.get('window');
@@ -145,122 +146,24 @@ function HomeScreen(): React.JSX.Element {
       <ScrollView contentContainerStyle={styles.contentContainer}>
 
         <Text style={styles.welcomeText}>Nos Pains Frais du Jour</Text>
-        <View style={styles.productGrid}>
-          {filteredBreads.map(product => {
-            const quantity = cart[product.id] || 0;
-            return (
-              <View key={product.id} style={styles.productCardPlaceholder}>
-                <Image
-                  source={product.image}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-                {/* Stepper/Add Button positionné absolument sur l'image */}
-                <View style={styles.stepperAbsoluteContainer}>
-                  {quantity === 0 ? (
-                    <TouchableOpacity
-                      style={styles.addToCartButton}
-                      onPress={() => updateCartItemQuantity(product.id, product.name, 1)}
-                    >
-                      <Ionicons name="add" size={18} color="#FFF" />
-                    </TouchableOpacity>
-                  ) : (
-                    <View style={styles.quantityStepper}>
-                      <TouchableOpacity
-                        style={styles.stepperButton}
-                        onPress={() => updateCartItemQuantity(product.id, product.name, -1)}
-                      >
-                        <Ionicons name="remove" size={16} color="#FFF" />
-                      </TouchableOpacity>
-                      <Text style={styles.quantityText}>{quantity}</Text>
-                      <TouchableOpacity
-                        style={styles.stepperButton}
-                        onPress={() => updateCartItemQuantity(product.id, product.name, 1)}
-                      >
-                        <Ionicons name="add" size={18} color="#FFF" />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
+        <ProductGrid
+          products={filteredBreads}
+          showStepper
+          onAddToCart={(id) => updateCartItemQuantity(id, 'nom', 1)}
+          onRemoveFromCart={(id) => updateCartItemQuantity(id, 'nom', -1)}
+          getQuantity={(id) => cart[id] || 0}
+        />
 
-                {/* Conteneur pour le reste des détails du produit */}
-                <View style={styles.productDetailsContainer}>
-                  <Text style={styles.productWeight}>{product.weight}</Text> {/* Poids en premier */}
-                  <Text style={styles.productName}>{product.name}</Text> {/* Titre en second */}
 
-                  <View style={styles.ratingRow}>
-                    {renderStars(product.rating)}
-                    <Text style={styles.ratingCount}>({product.ratingCount})</Text>
-                  </View>
-
-                  <View style={styles.priceTimeRow}>
-                    <Text style={styles.preparationTime}>{product.preparationTime}</Text>
-                    <Text style={styles.productPrice}>{product.price}</Text>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
 
         <Text style={styles.welcomeText}>Nos Pâtisseries du Jour</Text>
-        <View style={styles.productGrid}>
-          {filteredPastries.map(product => {
-            const quantity = cart[product.id] || 0;
-            return (
-              <View key={product.id} style={styles.productCardPlaceholder}>
-                <Image
-                  source={product.image}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-                {/* Stepper/Add Button positionné absolument sur l'image */}
-                <View style={styles.stepperAbsoluteContainer}>
-                  {quantity === 0 ? (
-                    <TouchableOpacity
-                      style={styles.addToCartButton}
-                      onPress={() => updateCartItemQuantity(product.id, product.name, 1)}
-                    >
-                      <Ionicons name="add" size={18} color="#FFF" />
-                    </TouchableOpacity>
-                  ) : (
-                    <View style={styles.quantityStepper}>
-                      <TouchableOpacity
-                        style={styles.stepperButton}
-                        onPress={() => updateCartItemQuantity(product.id, product.name, -1)}
-                      >
-                        <Ionicons name="remove" size={16} color="#FFF" />
-                      </TouchableOpacity>
-                      <Text style={styles.quantityText}>{quantity}</Text>
-                      <TouchableOpacity
-                        style={styles.stepperButton}
-                        onPress={() => updateCartItemQuantity(product.id, product.name, 1)}
-                      >
-                        <Ionicons name="add" size={18} color="#FFF" />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-
-                {/* Conteneur pour le reste des détails du produit */}
-                <View style={styles.productDetailsContainer}>
-                  <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.productWeight}>{product.weight}</Text>
-
-                  <View style={styles.ratingRow}>
-                    {renderStars(product.rating)}
-                    <Text style={styles.ratingCount}>({product.ratingCount})</Text>
-                  </View>
-
-                  <View style={styles.priceTimeRow}>
-                    <Text style={styles.preparationTime}>{product.preparationTime}</Text>
-                    <Text style={styles.productPrice}>{product.price}</Text>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
+        <ProductGrid
+          products={filteredPastries}
+          showStepper
+          onAddToCart={(id) => updateCartItemQuantity(id, 'nom', 1)}
+          onRemoveFromCart={(id) => updateCartItemQuantity(id, 'nom', -1)}
+          getQuantity={(id) => cart[id] || 0}
+        />
 
       </ScrollView>
 
