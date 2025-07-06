@@ -55,11 +55,19 @@ const CategoriesScreen: React.FC = () => {
 
   const allProducts = [...dummyBreads, ...dummyPastries];
 
-  const sucrés = allProducts.filter(p => p.type === 'Sucré');
-  const salés = allProducts.filter(p => p.type === 'Salé');
-  const neutres = allProducts.filter(p => p.type === 'Neutre');
-  const légAcidulés = allProducts.filter(p => p.type === 'Légèrement acidulé');
-  const acidulés = allProducts.filter(p => p.type === 'Acidulé');
+  // Search filter
+  const filteredProducts = allProducts.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sucrés = filteredProducts.filter(p => p.type === 'Sucré');
+  const salés = filteredProducts.filter(p => p.type === 'Salé');
+  const neutres = filteredProducts.filter(p => p.type === 'Neutre');
+  const légAcidulés = filteredProducts.filter(p => p.type === 'Légèrement acidulé');
+  const acidulés = filteredProducts.filter(p => p.type === 'Acidulé');
+
+  // Check if there are any results
+  const hasResults = sucrés.length + salés.length + neutres.length + légAcidulés.length + acidulés.length > 0;
 
   useEffect(() => {
       setShowCartPopup(totalItems > 0);
@@ -70,32 +78,45 @@ const CategoriesScreen: React.FC = () => {
       <CustomHeader appName="NEKABURU" onSearch={setSearchQuery} />
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Produits Sucrés</Text>
-        <ProductGrid
-          products={sucrés}
-          showStepper
-          onAddToCart={addToCart}
-          onRemoveFromCart={removeFromCart}
-          getQuantity={getQuantity}
-        />
 
-        <Text style={styles.title}>Produits Salés</Text>
-        <ProductGrid
-          products={salés}
-          showStepper
-          onAddToCart={addToCart}
-          onRemoveFromCart={removeFromCart}
-          getQuantity={getQuantity}
-        />
+        {sucrés.length > 0 && (
+          <>
+            <Text style={styles.title}>Produits Sucrés</Text>
+            <ProductGrid
+              products={sucrés}
+              showStepper
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              getQuantity={getQuantity}
+            />
+          </>
+        )}
 
-        <Text style={styles.title}>Produits Neutres</Text>
-        <ProductGrid
-          products={neutres}
-          showStepper
-          onAddToCart={addToCart}
-          onRemoveFromCart={removeFromCart}
-          getQuantity={getQuantity}
-        />
+        {salés.length > 0 && (
+          <>
+            <Text style={styles.title}>Produits Salés</Text>
+            <ProductGrid
+              products={salés}
+              showStepper
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              getQuantity={getQuantity}
+            />
+          </>
+        )}
+
+        {neutres.length > 0 && (
+          <>
+            <Text style={styles.title}>Produits Neutres</Text>
+            <ProductGrid
+              products={neutres}
+              showStepper
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              getQuantity={getQuantity}
+            />
+          </>
+        )}
 
         {légAcidulés.length > 0 && (
           <>

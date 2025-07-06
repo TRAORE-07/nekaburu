@@ -1,15 +1,15 @@
-// src/components/layout/CustomHeader.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Dimensions, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Pour gérer l'encoche des téléphones
-import Ionicons from '@expo/vector-icons/Ionicons'; // Pour l'icône de recherche
+import { View, Text, TextInput, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
 
+// Propriétés
 interface CustomHeaderProps {
   appName: string;
   showSearchBar?: boolean;
-  onSearch?: (text: string) => void; // Fonction appelée lors de la recherche
+  onSearch?: (text: string) => void;
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = true, onSearch }) => {
@@ -19,6 +19,11 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
     if (onSearch) {
       onSearch(searchText);
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    if (onSearch) onSearch('');
   };
 
   return (
@@ -35,15 +40,18 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
                 placeholder="Rechercher..."
                 placeholderTextColor="#999"
                 value={searchText}
-
                 onChangeText={(text) => {
                   setSearchText(text);
-                  if (onSearch) onSearch(text); // à chaque frappe
+                  if (onSearch) onSearch(text);
                 }}
-
                 onSubmitEditing={handleSearch}
                 returnKeyType="search"
               />
+              {searchText.length > 0 && (
+                <TouchableOpacity onPress={handleClearSearch}>
+                  <Ionicons name="close-circle" size={20} color="#666" style={styles.clearIcon} />
+                </TouchableOpacity>
+              )}
             </View>
           )}
         </View>
@@ -59,21 +67,21 @@ const styles = StyleSheet.create({
   headerContainer: {
     height: 120,
     width: '100%',
-    backgroundColor: '#DC771E', // Couleur de fond unie du header
-    justifyContent: 'flex-end', // Aligne le contenu vers le bas du header
+    backgroundColor: '#DC771E',
+    justifyContent: 'flex-end',
     paddingBottom: 5,
   },
   content: {
     flex: 1,
-    alignItems: 'flex-start', // <-- Alignement du contenu à gauche
+    alignItems: 'flex-start',
     paddingHorizontal: 20,
-    justifyContent: 'space-between', // Pour espacer le titre et la barre de recherche
+    justifyContent: 'space-between',
   },
   appName: {
     fontSize: 28,
     fontWeight: 'bold',
     marginTop: 20,
-    color: '#FFF', // Couleur du texte du nom de l'application
+    color: '#FFF',
     textShadowColor: 'rgb(0, 0, 0)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 15,
     paddingVertical: Platform.OS === 'ios' ? 10 : 5,
-    width: '100%', // Prend toute la largeur disponible dans le paddingHorizontal
+    width: '100%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -96,6 +104,9 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: 10,
     color: '#666',
+  },
+  clearIcon: {
+    marginLeft: 10,
   },
   searchInput: {
     flex: 1,
