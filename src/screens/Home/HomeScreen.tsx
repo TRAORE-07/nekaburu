@@ -6,6 +6,7 @@ import ProductGrid from '../../components/layout/ProductGrid';
 import { dummyBreads, dummyPastries } from '../../data/Products';
 import { useCart } from '../../hooks/useCart';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import theme from '../../styles/themes';
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10;
@@ -100,29 +101,29 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   fullScreen: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.white,
   },
   contentContainer: {
     padding: cardMargin,
-    paddingBottom: 20,
+    paddingBottom: theme.spacing.lg,
   },
   welcomeText: {
-    fontSize: 22,
+    fontSize: theme.fontSize.large,
     fontWeight: 'bold',
-    marginBottom: 15,
-    marginTop: 10,
-    color: '#333',
+    marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.sm,
+    color: theme.colors.grayDark,
     textAlign: 'center',
     width: '100%',
   },
   cartPopupContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: theme.spacing.lg,
     left: cardMargin,
     right: cardMargin,
-    borderRadius: 30,
+    borderRadius: theme.borderRadius.lg,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -132,9 +133,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#DC771E',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
     width: '100%',
   },
   cartPopupContent: {
@@ -143,14 +144,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cartPopupText: {
-    color: '#FFF',
-    fontSize: 16,
+    color: theme.colors.white,
+    fontSize: theme.fontSize.normal,
     fontWeight: 'normal',
-    marginRight: 10,
+    marginRight: theme.spacing.sm,
   },
   viewCartText: {
-    color: '#FFF',
-    fontSize: 18,
+    color: theme.colors.white,
+    fontSize: theme.fontSize.medium,
     fontWeight: 'bold',
   },
 });

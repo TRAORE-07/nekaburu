@@ -5,6 +5,7 @@ import ProductGrid from '../../components/layout/ProductGrid';
 import { dummyBreads, dummyPastries } from '../../data/Products';
 import { useCart } from '../../hooks/useCart';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import theme from '../../styles/themes';
 
 const { width } = Dimensions.get('window');
 const cardMargin = 10;
@@ -40,22 +41,19 @@ const CartPopup: React.FC<CartPopupProps> = ({ itemCount, onViewCart, isVisible 
           <Text style={styles.cartPopupText}>{itemCount} Article{itemCount > 1 ? 's' : ''}</Text>
           <Text style={styles.viewCartText}>Voir le panier</Text>
         </View>
-        <Ionicons name="chevron-forward" size={18} color="#FFF" />
+        <Ionicons name="chevron-forward" size={18} color={theme.colors.white} />
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
-
 const CategoriesScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCartPopup, setShowCartPopup] = useState(false);
-  
+
   const { cart, addToCart, removeFromCart, getQuantity, totalItems } = useCart();
 
   const allProducts = [...dummyBreads, ...dummyPastries];
-
-  // Search filter
   const filteredProducts = allProducts.filter(p =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -66,90 +64,48 @@ const CategoriesScreen: React.FC = () => {
   const légAcidulés = filteredProducts.filter(p => p.type === 'Légèrement acidulé');
   const acidulés = filteredProducts.filter(p => p.type === 'Acidulé');
 
-  // Check if there are any results
-  const hasResults = sucrés.length + salés.length + neutres.length + légAcidulés.length + acidulés.length > 0;
-
   useEffect(() => {
-      setShowCartPopup(totalItems > 0);
-    }, [totalItems]);
+    setShowCartPopup(totalItems > 0);
+  }, [totalItems]);
 
   return (
     <View style={styles.container}>
       <CustomHeader appName="NEKABURU" onSearch={setSearchQuery} />
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-
         {sucrés.length > 0 && (
           <>
             <Text style={styles.title}>Produits Sucrés</Text>
-            <ProductGrid
-              products={sucrés}
-              showStepper
-              onAddToCart={addToCart}
-              onRemoveFromCart={removeFromCart}
-              getQuantity={getQuantity}
-            />
+            <ProductGrid products={sucrés} showStepper onAddToCart={addToCart} onRemoveFromCart={removeFromCart} getQuantity={getQuantity} />
           </>
         )}
-
         {salés.length > 0 && (
           <>
             <Text style={styles.title}>Produits Salés</Text>
-            <ProductGrid
-              products={salés}
-              showStepper
-              onAddToCart={addToCart}
-              onRemoveFromCart={removeFromCart}
-              getQuantity={getQuantity}
-            />
+            <ProductGrid products={salés} showStepper onAddToCart={addToCart} onRemoveFromCart={removeFromCart} getQuantity={getQuantity} />
           </>
         )}
-
         {neutres.length > 0 && (
           <>
             <Text style={styles.title}>Produits Neutres</Text>
-            <ProductGrid
-              products={neutres}
-              showStepper
-              onAddToCart={addToCart}
-              onRemoveFromCart={removeFromCart}
-              getQuantity={getQuantity}
-            />
+            <ProductGrid products={neutres} showStepper onAddToCart={addToCart} onRemoveFromCart={removeFromCart} getQuantity={getQuantity} />
           </>
         )}
-
         {légAcidulés.length > 0 && (
           <>
             <Text style={styles.title}>Légèrement Acidulés</Text>
-            <ProductGrid
-              products={légAcidulés}
-              showStepper
-              onAddToCart={addToCart}
-              onRemoveFromCart={removeFromCart}
-              getQuantity={getQuantity}
-            />
+            <ProductGrid products={légAcidulés} showStepper onAddToCart={addToCart} onRemoveFromCart={removeFromCart} getQuantity={getQuantity} />
           </>
         )}
-
         {acidulés.length > 0 && (
           <>
             <Text style={styles.title}>Produits Acidulés</Text>
-            <ProductGrid
-              products={acidulés}
-              showStepper
-              onAddToCart={addToCart}
-              onRemoveFromCart={removeFromCart}
-              getQuantity={getQuantity}
-            />
+            <ProductGrid products={acidulés} showStepper onAddToCart={addToCart} onRemoveFromCart={removeFromCart} getQuantity={getQuantity} />
           </>
         )}
-
       </ScrollView>
-      <CartPopup
-        itemCount={totalItems}
-        onViewCart={() => console.log('Naviguer vers le panier')}
-        isVisible={showCartPopup}
-      />
+
+      <CartPopup itemCount={totalItems} onViewCart={() => console.log('Naviguer vers le panier')} isVisible={showCartPopup} />
     </View>
   );
 };
@@ -157,27 +113,27 @@ const CategoriesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background,
   },
   scrollContainer: {
-    padding: 10,
-    paddingBottom: 20,
+    padding: theme.spacing.sm,
+    paddingBottom: theme.spacing.lg,
   },
   title: {
-    fontSize: 20,
+    fontSize: theme.fontSize.medium,
     fontWeight: 'bold',
-    marginVertical: 10,
+    marginVertical: theme.spacing.sm,
     textAlign: 'center',
-    color: '#333',
+    color: theme.colors.grayDark,
   },
   cartPopupContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: theme.spacing.lg,
     left: cardMargin,
     right: cardMargin,
-    borderRadius: 30,
+    borderRadius: theme.borderRadius.lg,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -187,9 +143,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#DC771E',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
     width: '100%',
   },
   cartPopupContent: {
@@ -198,14 +154,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cartPopupText: {
-    color: '#FFF',
-    fontSize: 16,
+    color: theme.colors.white,
+    fontSize: theme.fontSize.normal,
     fontWeight: 'normal',
-    marginRight: 10,
+    marginRight: theme.spacing.sm,
   },
   viewCartText: {
-    color: '#FFF',
-    fontSize: 18,
+    color: theme.colors.white,
+    fontSize: theme.fontSize.medium,
     fontWeight: 'bold',
   },
 });
