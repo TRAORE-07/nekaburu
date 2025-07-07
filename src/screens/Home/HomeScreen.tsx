@@ -1,6 +1,8 @@
 // HOME SCREEN
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Animated, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomHeader from '../../components/layout/CustomHeader';
 import ProductGrid from '../../components/layout/ProductGrid';
 import { dummyBreads, dummyPastries } from '../../data/Products';
@@ -15,6 +17,11 @@ type CartPopupProps = {
   itemCount: number;
   onViewCart: () => void;
   isVisible: boolean;
+};
+
+type RootStackParamList = {
+  Accueil: undefined;
+  Panier: undefined;
 };
 
 const CartPopup: React.FC<CartPopupProps> = ({ itemCount, onViewCart, isVisible }) => {
@@ -61,6 +68,8 @@ const HomeScreen = () => {
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   useEffect(() => {
     setShowCartPopup(totalItems > 0);
   }, [totalItems]);
@@ -91,7 +100,7 @@ const HomeScreen = () => {
 
       <CartPopup
         itemCount={totalItems}
-        onViewCart={() => console.log('Naviguer vers le panier')}
+        onViewCart={() => navigation.navigate('Panier')}
         isVisible={showCartPopup}
       />
     </View>
