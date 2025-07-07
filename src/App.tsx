@@ -14,10 +14,6 @@ function App() {
     <CartProvider>
       <NavigationContainer>
         <AppNavigator />
-        <Stack.Navigator initialRouteName="Accueil">
-        <Stack.Screen name="Accueil" component={HomeScreen} />
-        <Stack.Screen name="Panier" component={CheckoutScreen} />
-      </Stack.Navigator>
       </NavigationContainer>
     </CartProvider>
   );
