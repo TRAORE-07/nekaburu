@@ -25,12 +25,12 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ImageBackground
+    <ImageBackground
         source={require('../../../assets/images/ingredients.jpg')}
         style={styles.headerContainer}
         resizeMode="cover"
       >
+    <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <Text style={styles.appName}>{appName}</Text>
 
@@ -57,8 +57,8 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
             </View>
           )}
         </View>
-      </ImageBackground>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 
@@ -68,9 +68,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   headerContainer: {
-    flex: 1,
+    height: 230,
     width: '100%',
-    justifyContent: 'center',
   },
   content: {
     flex: 1,

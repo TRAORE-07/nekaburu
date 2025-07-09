@@ -98,13 +98,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 };
 
 const styles = StyleSheet.create({
+  /* To remember: When you use space-between on a flex container, it distributes the available space evenly between the flex items in the row. 
+  It leaves no space before the first item or after the last. */
   productGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
   productCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#D3D3D3',
     marginBottom: cardMargin,
     borderRadius: 8,
     width: cardWidth,
