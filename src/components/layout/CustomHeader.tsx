@@ -1,11 +1,11 @@
+// Top
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions, Platform, TouchableOpacity, ImageBackground, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
 
-// Propriétés
 interface CustomHeaderProps {
   appName: string;
   showSearchBar?: boolean;
@@ -16,9 +16,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = () => {
-    if (onSearch) {
-      onSearch(searchText);
-    }
+    if (onSearch) onSearch(searchText);
   };
 
   const handleClearSearch = () => {
@@ -28,7 +26,11 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.headerContainer}>
+      <ImageBackground
+        source={require('../../../assets/images/ingredients.jpg')}
+        style={styles.headerContainer}
+        resizeMode="cover"
+      >
         <View style={styles.content}>
           <Text style={styles.appName}>{appName}</Text>
 
@@ -55,36 +57,34 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ appName, showSearchBar = tr
             </View>
           )}
         </View>
-      </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#DC771E',
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   headerContainer: {
-    height: 120,
+    flex: 1,
     width: '100%',
-    backgroundColor: '#DC771E',
-    justifyContent: 'flex-end',
-    paddingBottom: 5,
+    justifyContent: 'center',
   },
   content: {
     flex: 1,
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   appName: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginTop: 20,
-    color: '#FFF',
-    textShadowColor: 'rgb(0, 0, 0)',
+    color: '#fff',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 15,
   },
   searchBarContainer: {
     flexDirection: 'row',
@@ -99,11 +99,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 5,
-    marginTop: 10,
+    marginTop: 30,
   },
   searchIcon: {
     marginRight: 10,
-    color: '#666',
   },
   clearIcon: {
     marginLeft: 10,
