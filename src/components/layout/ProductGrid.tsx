@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   productCard: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: '#f0f0f0',
     marginBottom: cardMargin,
     borderRadius: 8,
     width: cardWidth,
