@@ -1,21 +1,190 @@
 // src/screens/BuyAgain/BuyAgainScreen.tsx
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import CustomHeader from '../../components/layout/CustomHeader'; //Header
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, Dimensions, Animated, TouchableOpacity } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Added useFocusEffect
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import CustomHeader from '../../components/layout/CustomHeader';
+import ProductGrid from '../../components/layout/ProductGrid';
+import { dummyBreads, dummyPastries } from '../../data/Products';
+import { useCart } from '../../hooks/useCart';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import theme from '../../styles/themes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width } = Dimensions.get('window');
+const cardMargin = 10;
+
+// Constante pour la clé de stockage AsyncStorage
+const ADDED_PRODUCTS_HISTORY_KEY = 'addedProductsHistory';
+
+type CartPopupProps = {
+  itemCount: number;
+  onViewCart: () => void;
+  isVisible: boolean;
+};
+
+type RootStackParamList = {
+  Accueil: undefined;
+  Panier: undefined;
+};
+
+const CartPopup: React.FC<CartPopupProps> = ({ itemCount, onViewCart, isVisible }) => {
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedValue, {
+      toValue: isVisible ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [isVisible]);
+
+  const translateY = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [100, 0],
+  });
+
+  if (!isVisible && animatedValue.__getValue() === 0) return null;
+
+  return (
+    <Animated.View style={[styles.cartPopupContainer, { transform: [{ translateY }] }]}>
+      <TouchableOpacity onPress={onViewCart} style={styles.cartPopupButton}>
+        <View style={styles.cartPopupContent}>
+          <Text style={styles.cartPopupText}>{itemCount} Article{itemCount > 1 ? 's' : ''}</Text>
+          <Text style={styles.viewCartText}>Voir le panier</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color="#FFF" />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 function BuyAgainScreen(): React.JSX.Element {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { cart, addToCart, removeFromCart, getQuantity, totalItems } = useCart();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCartPopup, setShowCartPopup] = useState(false);
+  // Nouvel état pour stocker l'historique des IDs des produits ajoutés
+  const [addedProductHistory, setAddedProductHistory] = useState<string[]>([]);
+
+  // Charger l'historique des produits ajoutés depuis AsyncStorage au montage
+  useEffect(() => {
+    const loadAddedProductsHistory = async () => {
+      try {
+        const historyString = await AsyncStorage.getItem(ADDED_PRODUCTS_HISTORY_KEY);
+        if (historyString) {
+          setAddedProductHistory(JSON.parse(historyString));
+        }
+      } catch (error) {
+        console.error("Failed to load added products history from AsyncStorage", error);
+      }
+    };
+    loadAddedProductsHistory();
+  }, []);
+
+  // Mettre à jour l'historique chaque fois que le panier change (quand des items sont ajoutés)
+  // et persister dans AsyncStorage.
+  // Utilisez useFocusEffect pour garantir que l'historique est à jour même si on navigue hors de l'écran d'accueil.
+  useFocusEffect(
+    useCallback(() => {
+      const updateAndSaveHistory = async () => {
+        // Obtenez les IDs des produits actuellement dans le panier
+        const currentCartProductIds = Object.keys(cart);
+        // Créez un nouvel historique en combinant l'ancien et les nouveaux IDs uniques
+        const newHistory = Array.from(new Set([...addedProductHistory, ...currentCartProductIds]));
+
+        if (JSON.stringify(newHistory) !== JSON.stringify(addedProductHistory)) {
+          setAddedProductHistory(newHistory);
+          try {
+            await AsyncStorage.setItem(ADDED_PRODUCTS_HISTORY_KEY, JSON.stringify(newHistory));
+          } catch (error) {
+            console.error("Failed to save added products history to AsyncStorage", error);
+          }
+        }
+      };
+      updateAndSaveHistory();
+    }, [cart, addedProductHistory]) // Dépendances: panier actuel et l'état de l'historique
+  );
+
+
+  // Combiner tous les produits disponibles (pain et pâtisseries)
+  const allProducts = [...dummyBreads, ...dummyPastries];
+
+  // Filtrer les produits pour n'afficher que ceux qui sont dans l'historique
+  const productsFromHistory = allProducts.filter(product =>
+    addedProductHistory.includes(product.id)
+  );
+
+  // Appliquer le filtre de recherche sur les produits de l'historique
+  const filteredProducts = productsFromHistory.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Séparer les pains et pâtisseries filtrés pour les afficher dans des grilles distinctes
+  const filteredBreadsInHistory = filteredProducts.filter(p => dummyBreads.some(b => b.id === p.id));
+  const filteredPastriesInHistory = filteredProducts.filter(p => dummyPastries.some(pa => pa.id === p.id));
+
+  useEffect(() => {
+    setShowCartPopup(totalItems > 0);
+  }, [totalItems]);
+
   const handleSearch = (searchText: string) => {
-    console.log('Recherche lancée sur l’accueil pour:', searchText);
-    // implémenterier la logique de recherche, par exemple filtrer les produits
+    setSearchQuery(searchText);
+  };
+
+  const handleViewCart = () => {
+    navigation.navigate('Panier');
   };
 
   return (
-    <View style={styles.fullScreen}> {/* Un conteneur qui prend tout l'écran */}
-    <CustomHeader appName="NEKABURU" onSearch={handleSearch} /> {/* Utilisez votre en-tête */}
-    <View style={styles.container}>
-      <Text style={styles.title}>Écran "Racheter"</Text>
-      {/* Ajoutez ici le contenu de votre page "Racheter" */}
-      </View>
+    <View style={styles.fullScreen}>
+      <CustomHeader appName="NEKABURU" onSearch={handleSearch} />
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>Racheter vos favoris</Text>
+        <Text style={styles.welcomeText}>
+          Retrouvez ici tous les produits que vous avez déjà ajoutés à votre panier.
+        </Text>
+
+        {filteredProducts.length === 0 ? (
+          <Text style={styles.noItemsText}>
+            Aucun article n'a encore été ajouté à votre historique. Ajoutez des articles à votre panier pour les retrouver ici plus tard !
+          </Text>
+        ) : (
+          <>
+            {filteredBreadsInHistory.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>Vos Pains Préférés</Text>
+                <ProductGrid
+                  products={filteredBreadsInHistory}
+                  showStepper
+                  onAddToCart={(id) => addToCart(id)}
+                  onRemoveFromCart={(id) => removeFromCart(id)}
+                  getQuantity={getQuantity}
+                />
+              </>
+            )}
+
+            {filteredPastriesInHistory.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>Vos Pâtisseries Préférées</Text>
+                <ProductGrid
+                  products={filteredPastriesInHistory}
+                  showStepper
+                  onAddToCart={(id) => addToCart(id)}
+                  onRemoveFromCart={(id) => removeFromCart(id)}
+                  getQuantity={getQuantity}
+                />
+              </>
+            )}
+          </>
+        )}
+      </ScrollView>
+
+      <CartPopup
+        itemCount={totalItems}
+        onViewCart={handleViewCart}
+        isVisible={showCartPopup}
+      />
     </View>
   );
 }
@@ -23,18 +192,81 @@ function BuyAgainScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   fullScreen: {
     flex: 1,
-    backgroundColor: '#fff', // Le fond de l'écran principal
+    backgroundColor: theme.colors.white,
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff', // Couleur d'arrière-plan pour distinguer
+  contentContainer: {
+    padding: cardMargin,
+    paddingBottom: theme.spacing.lg + 100, // Espace pour le popup du panier
+  },
+  welcomeText: {
+    fontSize: theme.fontSize.normal,
+    marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.sm,
+    color: theme.colors.grayDark,
+    textAlign: 'center',
+    width: '100%',
   },
   title: {
-    fontSize: 24,
+    fontSize: theme.fontSize.xlarge,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginVertical: theme.spacing.md,
+    textAlign: 'center',
+    color: theme.colors.text,
+  },
+  sectionTitle: {
+    fontSize: theme.fontSize.large,
+    fontWeight: 'bold',
+    marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.lg, // Plus d'espace entre les sections
+    color: theme.colors.grayDark,
+    textAlign: 'center',
+    width: '100%',
+  },
+  noItemsText: {
+    fontSize: theme.fontSize.normal,
+    color: theme.colors.gray,
+    textAlign: 'center',
+    marginTop: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.md,
+  },
+  cartPopupContainer: {
+    position: 'absolute',
+    bottom: theme.spacing.lg,
+    left: cardMargin,
+    right: cardMargin,
+    borderRadius: theme.borderRadius.lg,
+    overflow: 'hidden',
+    shadowColor: theme.colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 10,
+    zIndex: 100,
+  },
+  cartPopupButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    width: '100%',
+  },
+  cartPopupContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  cartPopupText: {
+    color: theme.colors.white,
+    fontSize: theme.fontSize.normal,
+    fontWeight: 'normal',
+    marginRight: theme.spacing.sm,
+  },
+  viewCartText: {
+    color: theme.colors.white,
+    fontSize: theme.fontSize.medium,
+    fontWeight: 'bold',
   },
 });
 
