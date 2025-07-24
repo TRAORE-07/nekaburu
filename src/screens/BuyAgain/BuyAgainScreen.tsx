@@ -82,9 +82,6 @@ function BuyAgainScreen(): React.JSX.Element {
     loadAddedProductsHistory();
   }, []);
 
-  // Mettre à jour l'historique chaque fois que le panier change (quand des items sont ajoutés)
-  // et persister dans AsyncStorage.
-  // Utilisez useFocusEffect pour garantir que l'historique est à jour même si on navigue hors de l'écran d'accueil.
   useFocusEffect(
     useCallback(() => {
       const updateAndSaveHistory = async () => {
@@ -107,7 +104,6 @@ function BuyAgainScreen(): React.JSX.Element {
   );
 
 
-  // Combiner tous les produits disponibles (pain et pâtisseries)
   const allProducts = [...dummyBreads, ...dummyPastries];
 
   // Filtrer les produits pour n'afficher que ceux qui sont dans l'historique
@@ -120,7 +116,6 @@ function BuyAgainScreen(): React.JSX.Element {
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Séparer les pains et pâtisseries filtrés pour les afficher dans des grilles distinctes
   const filteredBreadsInHistory = filteredProducts.filter(p => dummyBreads.some(b => b.id === p.id));
   const filteredPastriesInHistory = filteredProducts.filter(p => dummyPastries.some(pa => pa.id === p.id));
 
@@ -140,7 +135,6 @@ function BuyAgainScreen(): React.JSX.Element {
     <View style={styles.fullScreen}>
       <CustomHeader appName="NEKABURU" onSearch={handleSearch} />
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Racheter vos favoris</Text>
         <Text style={styles.welcomeText}>
           Retrouvez ici tous les produits que vous avez déjà ajoutés à votre panier.
         </Text>
@@ -200,18 +194,18 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: theme.fontSize.normal,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
     marginTop: theme.spacing.sm,
     color: theme.colors.grayDark,
     textAlign: 'center',
     width: '100%',
   },
   title: {
-    fontSize: theme.fontSize.xlarge,
+    fontSize: theme.fontSize.large,
     fontWeight: 'bold',
     marginVertical: theme.spacing.md,
     textAlign: 'center',
-    color: theme.colors.text,
+    color: theme.colors.grayDark,
   },
   sectionTitle: {
     fontSize: theme.fontSize.large,
@@ -224,9 +218,9 @@ const styles = StyleSheet.create({
   },
   noItemsText: {
     fontSize: theme.fontSize.normal,
-    color: theme.colors.gray,
+    color: theme.colors.grayMedium,
     textAlign: 'center',
-    marginTop: theme.spacing.xl,
+    marginTop: theme.spacing.lg,
     paddingHorizontal: theme.spacing.md,
   },
   cartPopupContainer: {
