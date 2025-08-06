@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
 import theme from '../../styles/themes';
@@ -18,103 +18,111 @@ const MenuItem = ({ title, iconName, onPress }) => (
 function ProfileScreen(): React.JSX.Element {
   const [selectedAppearance, setSelectedAppearance] = useState('light');
   
-  // Exemple de gestion des actions de navigation (ici, juste des logs)
-  const handlePress = (option) => {
+  const handlePress = (option: string) => {
     console.log(`Action pour "${option}" déclenchée.`);
-    // Ici, vous utiliseriez navigation.navigate('NomDeLaPage')
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* HEADER: Image de profil et informations */}
-      <View style={styles.profileHeader}>
-        <Image
-          source={require('../../../assets/images/man.png')}
-          style={styles.profileImage}
-        />
-        <Text style={styles.profileName}>John Doe</Text>
-        <Text style={styles.profileEmail}>john.doe@example.com</Text>
-      </View>
-
-      {/* Apparence (Menu déroulant simulé) */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Apparence</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={selectedAppearance}
-            onValueChange={(itemValue) => setSelectedAppearance(itemValue)}
-            style={styles.picker}
-            dropdownIconColor={theme.colors.primary}
-          >
-            <Picker.Item label="Clair" value="light" />
-            <Picker.Item label="Sombre" value="dark" />
-            <Picker.Item label="Système" value="system" />
-          </Picker>
+    <SafeAreaView style={styles.safeAreaContainer}>
+      <ScrollView style={styles.container}>
+        {/* HEADER: Image de profil et informations */}
+        <View style={styles.profileHeader}>
+          <Image
+            source={require('../../../assets/images/profile1.jpg')}
+            style={styles.profileImage}
+          />
+          <Text style={styles.profileName}>Djeneba Traore</Text>
+          <Text style={styles.profileEmail}>djeneba@gmail.com</Text>
         </View>
-      </View>
-      
-      {/* --- Vos informations --- */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Vos informations</Text>
-        <MenuItem
-          title="Vos commandes"
-          iconName="receipt-outline"
-          onPress={() => handlePress("Commandes")}
-        />
-        <MenuItem
-          title="Votre liste de souhaits"
-          iconName="heart-outline"
-          onPress={() => handlePress("Liste de souhaits")}
-        />
-        <MenuItem
-          title="Modes de paiement"
-          iconName="card-outline"
-          onPress={() => handlePress("Modes de paiement")}
-        />
-      </View>
 
-      {/* --- Autres informations --- */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Autres informations</Text>
-        <MenuItem
-          title="Partager l'application"
-          iconName="share-social-outline"
-          onPress={() => handlePress("Partager l'application")}
-        />
-        <MenuItem
-          title="À propos de nous"
-          iconName="information-circle-outline"
-          onPress={() => handlePress("À propos de nous")}
-        />
-        <MenuItem
-          title="Compte"
-          iconName="person-circle-outline"
-          onPress={() => handlePress("Compte")}
-        />
-      </View>
+        {/* --- Menu Apparence --- */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Apparence</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedAppearance}
+              onValueChange={(itemValue) => setSelectedAppearance(itemValue)}
+              style={styles.picker}
+              dropdownIconColor={theme.colors.primary}
+              dropdownIconRippleColor={theme.colors.primaryLight}
+              mode={Platform.OS === 'android' ? 'dropdown' : 'dialog'} // Adapte le mode selon la plateforme
+              prompt="Choisissez un thème" // Texte pour Android
+            >
+              <Picker.Item label="Clair" value="light" color={theme.colors.grayDark} />
+              <Picker.Item label="Sombre" value="dark" color={theme.colors.grayDark} />
+              <Picker.Item label="Système" value="system" color={theme.colors.grayDark} />
+            </Picker>
+          </View>
+        </View>
+        
+        {/* --- Vos informations --- */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Vos informations</Text>
+          <MenuItem
+            title="Vos commandes"
+            iconName="receipt-outline"
+            onPress={() => handlePress("Commandes")}
+          />
+          <MenuItem
+            title="Votre liste de souhaits"
+            iconName="heart-outline"
+            onPress={() => handlePress("Liste de souhaits")}
+          />
+          <MenuItem
+            title="Modes de paiement"
+            iconName="card-outline"
+            onPress={() => handlePress("Modes de paiement")}
+          />
+        </View>
 
-      {/* Bouton de déconnexion */}
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={() => handlePress("Se déconnecter")}
-      >
-        <Text style={styles.logoutText}>Se déconnecter</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* --- Autres informations --- */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Autres informations</Text>
+          <MenuItem
+            title="Partager l'application"
+            iconName="share-social-outline"
+            onPress={() => handlePress("Partager l'application")}
+          />
+          <MenuItem
+            title="À propos de nous"
+            iconName="information-circle-outline"
+            onPress={() => handlePress("À propos de nous")}
+          />
+          <MenuItem
+            title="Compte"
+            iconName="person-circle-outline"
+            onPress={() => handlePress("Compte")}
+          />
+        </View>
+
+        {/* Bouton de déconnexion */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => handlePress("Se déconnecter")}
+        >
+          <Text style={styles.logoutText}>Se déconnecter</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 // STYLES
 const styles = StyleSheet.create({
+  safeAreaContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  paddingTop: Platform.OS === 'android' ? 25 : 0, // Ajustement pour Android
+  },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background, // Assurez-vous que le background est dans votre thème
+    backgroundColor: theme.colors.background,
   },
   profileHeader: {
     alignItems: 'center',
-    padding: theme.spacing.lg, // Ajusté pour correspondre à votre thème
+    padding: theme.spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border, // Assurez-vous que le border est dans votre thème
+    borderBottomColor: theme.colors.grayLight,
     marginBottom: theme.spacing.md,
   },
   profileImage: {
@@ -124,13 +132,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   profileName: {
-    fontSize: theme.fontSize.large, // Ajusté pour correspondre à votre thème
+    fontSize: theme.fontSize.large,
     fontWeight: 'bold',
-    color: theme.colors.text, // Assurez-vous que le text est dans votre thème
+    color: theme.colors.grayDark,
   },
   profileEmail: {
-    fontSize: theme.fontSize.normal, // Ajusté pour correspondre à votre thème
-    color: theme.colors.textLight, // Assurez-vous que le textLight est dans votre thème
+    fontSize: theme.fontSize.normal,
+    color: theme.colors.grayMedium,
   },
   section: {
     marginBottom: theme.spacing.md,
@@ -138,9 +146,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: theme.fontSize.normal, // Ajusté pour correspondre à votre thème
+    fontSize: theme.fontSize.normal,
     fontWeight: 'bold',
-    color: theme.colors.text,
+    color: theme.colors.grayDark,
     marginLeft: theme.spacing.md,
     marginBottom: theme.spacing.sm,
     marginTop: theme.spacing.lg,
@@ -152,7 +160,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.grayLight,
   },
   menuItemLeft: {
     flexDirection: 'row',
@@ -160,32 +168,36 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     marginLeft: theme.spacing.md,
-    fontSize: theme.fontSize.normal, // Ajusté pour correspondre à votre thème
-    color: theme.colors.text,
+    fontSize: theme.fontSize.normal,
+    color: theme.colors.grayDark,
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.borderRadius.sm, // Ajusté pour correspondre à votre thème
+    borderColor: theme.colors.grayLight,
+    borderRadius: theme.borderRadius.sm,
     marginHorizontal: theme.spacing.md,
     marginBottom: theme.spacing.sm,
+    overflow: 'hidden',
+    backgroundColor: theme.colors.background,
   },
   picker: {
     height: 50,
     width: '100%',
-    color: theme.colors.text,
+    color: theme.colors.grayDark,
   },
   logoutButton: {
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.sm, // Ajusté pour correspondre à votre thème
+    padding: theme.spacing.sm,
+    borderRadius: theme.borderRadius.sm,
     alignItems: 'center',
     margin: theme.spacing.md,
     marginTop: theme.spacing.lg,
+    //borderWidth: 1,
+    borderColor: theme.colors.primary,
   },
   logoutText: {
-    color: theme.colors.danger, // Assurez-vous que le danger est dans votre thème
-    fontSize: theme.fontSize.large, // Ajusté pour correspondre à votre thème
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.large,
     fontWeight: 'bold',
   },
 });
