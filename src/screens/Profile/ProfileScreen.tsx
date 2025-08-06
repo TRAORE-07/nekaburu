@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
+//import { Picker } from '@react-native-picker/picker';
+//Picker is not working for the drop dowwn list, so let's go with modal-dropdown
+import ModalDropdown from 'react-native-modal-dropdown';
 import theme from '../../styles/themes';
+
 
 // Composant pour chaque ligne de menu
 const MenuItem = ({ title, iconName, onPress }) => (
@@ -17,9 +20,17 @@ const MenuItem = ({ title, iconName, onPress }) => (
 
 function ProfileScreen(): React.JSX.Element {
   const [selectedAppearance, setSelectedAppearance] = useState('light');
+  const appearanceOptions = ['Clair', 'Sombre', 'Système'];
+  const appearanceValues = ['light', 'dark', 'system'];
   
+  const handleAppearanceSelect = (index: number, value: string) => {
+    setSelectedAppearance(appearanceValues[index]);
+  };
+
+  // Exemple de gestion des actions de navigation (ici, juste des logs)
   const handlePress = (option: string) => {
     console.log(`Action pour "${option}" déclenchée.`);
+    // Ici, vous utiliseriez navigation.navigate('NomDeLaPage')
   };
 
   return (
@@ -38,21 +49,34 @@ function ProfileScreen(): React.JSX.Element {
         {/* --- Menu Apparence --- */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Apparence</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedAppearance}
-              onValueChange={(itemValue) => setSelectedAppearance(itemValue)}
-              style={styles.picker}
-              dropdownIconColor={theme.colors.primary}
-              dropdownIconRippleColor={theme.colors.primaryLight}
-              mode={Platform.OS === 'android' ? 'dropdown' : 'dialog'} // Adapte le mode selon la plateforme
-              prompt="Choisissez un thème" // Texte pour Android
-            >
-              <Picker.Item label="Clair" value="light" color={theme.colors.grayDark} />
-              <Picker.Item label="Sombre" value="dark" color={theme.colors.grayDark} />
-              <Picker.Item label="Système" value="system" color={theme.colors.grayDark} />
-            </Picker>
-          </View>
+          <ModalDropdown
+            options={appearanceOptions}
+            defaultValue={appearanceOptions[appearanceValues.indexOf(selectedAppearance)]}
+            onSelect={handleAppearanceSelect}
+            style={styles.dropdownButton}
+            textStyle={styles.dropdownButtonText}
+            dropdownStyle={styles.dropdown}
+            dropdownTextStyle={styles.dropdownOptionText}
+            dropdownTextHighlightStyle={styles.dropdownOptionTextHighlight}
+            renderRow={(option, index, isSelected) => (
+              <View style={[
+                styles.dropdownOption,
+                isSelected && styles.dropdownOptionSelected
+              ]}>
+                <Text style={styles.dropdownOptionText}>{option}</Text>
+                {isSelected && (
+                  <Ionicons name="checkmark" size={18} color={theme.colors.primary} />
+                )}
+              </View>
+            )}
+          >
+            <View style={styles.dropdownButtonContent}>
+              <Text style={styles.dropdownButtonText}>
+                {appearanceOptions[appearanceValues.indexOf(selectedAppearance)]}
+              </Text>
+              <Ionicons name="chevron-down" size={18} color={theme.colors.grayMedium} />
+            </View>
+          </ModalDropdown>
         </View>
         
         {/* --- Vos informations --- */}
@@ -112,7 +136,6 @@ const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
     backgroundColor: theme.colors.background,
-  paddingTop: Platform.OS === 'android' ? 25 : 0, // Ajustement pour Android
   },
   container: {
     flex: 1,
@@ -171,29 +194,58 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.normal,
     color: theme.colors.grayDark,
   },
-  pickerContainer: {
+  dropdownButton: {
     borderWidth: 1,
     borderColor: theme.colors.grayLight,
     borderRadius: theme.borderRadius.sm,
     marginHorizontal: theme.spacing.md,
     marginBottom: theme.spacing.sm,
-    overflow: 'hidden',
+    height: 50,
+    justifyContent: 'center',
+  },
+  dropdownButtonContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.md,
+  },
+  dropdownButtonText: {
+    fontSize: theme.fontSize.normal,
+    color: theme.colors.grayDark,
+  },
+  dropdown: {
+    width: '80%',
+    marginTop: 10,
+    borderRadius: theme.borderRadius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.grayLight,
     backgroundColor: theme.colors.background,
   },
-  picker: {
-    height: 50,
-    width: '100%',
+  dropdownOption: {
+    padding: theme.spacing.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.grayLight,
+  },
+  dropdownOptionSelected: {
+    backgroundColor: theme.colors.grayLight,
+  },
+  dropdownOptionText: {
+    fontSize: theme.fontSize.normal,
     color: theme.colors.grayDark,
+  },
+  dropdownOptionTextHighlight: {
+    color: theme.colors.primary,
   },
   logoutButton: {
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.sm,
+    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.sm,
     alignItems: 'center',
     margin: theme.spacing.md,
     marginTop: theme.spacing.lg,
-    //borderWidth: 1,
-    borderColor: theme.colors.primary,
   },
   logoutText: {
     color: theme.colors.primary,
