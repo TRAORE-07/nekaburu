@@ -103,11 +103,12 @@ const styles = StyleSheet.create({
   productGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    marginHorizontal: -cardMargin / 2,
   },
   productCard: {
     backgroundColor: '#f0f0f0',
-    marginBottom: cardMargin,
+    margin: cardMargin /2,
     borderRadius: 8,
     width: cardWidth,
     height: 205,
