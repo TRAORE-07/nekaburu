@@ -1,10 +1,11 @@
 # nekaburu
-Une application de e-commerce moderne, compatible iOS et Android pour commander du pain et des pâtisseries. Avec une suivi en live de la commande.
+Une application de e-commerce moderne, compatible iOS et Android pour commander du pain et des pâtisseries. Avec une suivi en live de la commande et rating de la commande.
 
-A modern iOS and Android-compatible e-commerce app, for ordering bread and pastries. With live order tracking.
+A modern iOS and Android-compatible e-commerce app, for ordering bread and pastries. With live order tracking and rating of the order.
 
 ## TECHNOLOGIES:
 - React Native
+- Node.js
 - TypeScript
 - Expo
 
