@@ -5,4 +5,3 @@
     "module": "esnext" // override the module setting
   }
 }
-
